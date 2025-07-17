@@ -6,7 +6,7 @@ function Navbar() {
 
     return (
         <nav className="navbar">
-            <img src="../public/assets/cropped-Esca-logo.png" alt="Logo ESCA" />
+            <img src="/assets/cropped-Esca-Logo.png" alt="Logo ESCA" />
             <Link to={isAdmin ? "/" : "/admin"}>
                 {isAdmin ? "Inicio" : "Admin"}
             </Link>
