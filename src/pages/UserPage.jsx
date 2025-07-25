@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import Navbar from "../components/Navbar"
+import { exportMaterialsToPDF } from "../components/ExportToPDF"
 
 function UserPage() {
   const [parts, setParts] = useState([])
@@ -8,7 +9,7 @@ function UserPage() {
   const [searchResults, setSearchResults] = useState({})
   const [selectedProducts, setSelectedProducts] = useState({})
   const [totalMaterials, setTotalMaterials] = useState([])
-  const [totalGuests, setTotalGuests] = useState(0)
+  const [totalGuests, setTotalGuests] = useState('')
 
   useEffect(() => {
     fetch("http://localhost:8080/api/parts")
@@ -26,10 +27,8 @@ function UserPage() {
   }
 
   const handleSearchChange = (partId, query) => {
-    // Guardamos el input
     setSearchInputs(prev => ({ ...prev, [partId]: query }))
 
-    // Hacemos fetch si hay texto
     if (query.length > 1) {
       fetch(`http://localhost:8080/api/products/search?query=${query}`)
         .then(res => res.json())
@@ -43,126 +42,125 @@ function UserPage() {
   }
 
   const handleAddProductToPart = async (partId, productId) => {
-  try {
-    const res = await fetch(`http://localhost:8080/api/products/${productId}`)
-    const product = await res.json()
+    try {
+      const res = await fetch(`http://localhost:8080/api/products/${productId}`)
+      const product = await res.json()
 
-    // Añadir el producto al array de productos de esa parte
-    setSelectedProducts(prev => {
-      const updated = { ...prev }
-      if (!updated[partId]) updated[partId] = []
+      setSelectedProducts(prev => {
+        const updated = { ...prev }
+        if (!updated[partId]) updated[partId] = []
 
-      const alreadyExists = updated[partId].some(p => p._id === product._id)
-      if (!alreadyExists) {
-        updated[partId].push(product)
-      }
-      return updated
-    })
-
-    addMaterials(product.materials || [])
-
+        const alreadyExists = updated[partId].some(p => p._id === product._id)
+        if (!alreadyExists) {
+          updated[partId].push(product)
+        }
+        return updated
+      })
     } catch (error) {
-      console.error("Error añadiendo producto a la parte:", error)
+      console.error("Error adding product:", error)
     }
   }
 
-  const addMaterials = (newMaterials) => {
-    setTotalMaterials(prev => {
-      const map = {}
+  const handleCalculateMaterials = async () => {
+    const allSelectedProducts = Object.values(selectedProducts)
+      .flat()
+      .map(p => ({ productId: p._id, unitsPerGuest: p.unitsPerGuest }))
 
-      prev.forEach(m => {
-        const id = m.material?._id || m.material
-        if (map[id]) {
-          map[id].quantity += m.quantity
-        } else {
-          map[id] = { ...m }
-        }
+    try {
+      const res = await fetch("http://localhost:8080/api/materials/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guests: totalGuests, products: allSelectedProducts })
       })
 
-      newMaterials.forEach(m => {
-        const id = m.material?._id || m.material
-        if (map[id]) {
-          map[id].quantity += m.quantity
-        } else {
-          map[id] = { ...m }
-        }
-      })
-
-    return Object.values(map)
-    })
+      const materials = await res.json()
+      setTotalMaterials(materials)
+    } catch (error) {
+      console.error("Error calculating materials:", error)
+    }
   }
 
   return (
     <>
       <Navbar />
-      <section>
-        <h1>Configuración del evento</h1>
-        <ul className="parts-list">
-          {parts.map(part => (
-            <li key={part._id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedParts.includes(part._id)}
-                  onChange={() => handlePartToggle(part._id)}
-                />
-                {part.name}
-              </label>
-            </li>
-          ))}
-          <label>
-            Número total de invitados:
-            <input 
-              type="number" 
-              min="0" 
-              value={totalGuests} 
-              onChange={e => setTotalGuests(Number(e.target.value))} 
-            />
-          </label>
-        </ul>
-
-        {selectedParts.map(partId => {
-          const part = parts.find(p => p._id === partId)
-          return (
-            <div key={partId}>
-              <h2>{part.name}:</h2>
-
+      <div className="container">
+        <section>
+          <h1>Partes del evento</h1>
+            <label>
+              Invitados:
               <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchInputs[partId] || ""}
-                onChange={e => handleSearchChange(partId, e.target.value)}
+                type="number"
+                value={totalGuests}
+                onChange={e => setTotalGuests(Number(e.target.value))}
               />
+            </label>
+          <ul className="parts-list">
+            {parts.map(part => (
+              <li key={part._id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={selectedParts.includes(part._id)}
+                    onChange={() => handlePartToggle(part._id)}
+                    />
+                  {part.name}
+                </label>
+              </li>
+            ))}
+          </ul>
 
-              <ul>
-                {(searchResults[partId] || []).map(product => (
-                  <li key={product._id}>
-                    {product.name}
-                    <button onClick={() => handleAddProductToPart(partId, product._id)}>Añadir</button>
-                  </li>
-                ))}
-              </ul>
-              
-              <h3>Productos añadidos:</h3>
-              <ul>
-                {(selectedProducts[partId] || []).map(prod => (
-                  <li key={prod._id}>{prod.name}</li>
-                ))}
-              </ul>         
-            </div>
-          )
-        })}
-      </section>
-      <section>
-        <h2>Materiales totales:</h2>
-        <ul>
-          {totalMaterials.map((mat, idx) => (
-            <li key={idx}>
-              {mat.material?.name || "Nombre desconocido"} ({mat.quantity})
-            </li>
-          ))}
-        </ul>
-      </section>
+          {selectedParts.map(partId => {
+            const part = parts.find(p => p._id === partId)
+            return (
+              <div key={partId}>
+                <h2>{part.name}</h2>
+
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  value={searchInputs[partId] || ""}
+                  onChange={e => handleSearchChange(partId, e.target.value)}
+                  />
+                <ul>
+                  {(searchResults[partId] || []).map(product => (
+                    <li className="search-results" key={product._id}>
+                      <button className="btns" onClick={() => handleAddProductToPart(partId, product._id)}>
+                        Añadir
+                      </button>
+                      {product.name}
+                    </li>
+                  ))}
+                </ul>
+
+                <h3>Productos seleccionados:</h3>
+                <div className="lists">
+                  <ul>
+                    {(selectedProducts[partId] || []).map(prod => (
+                      <li key={prod._id}>{prod.name}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )
+          })}
+        </section>
+        <section>
+          <h2>Total materiales:</h2>
+          <div className="btns">
+            <button onClick={handleCalculateMaterials}>Calcular Materiales</button>
+            <button onClick={() => exportMaterialsToPDF(totalMaterials, totalGuests)}>Descargar PDF</button>
+          </div>
+          <div className="lists">
+            <ul>
+              {totalMaterials.map((mat, idx) => (
+                <li key={idx}>
+                  {mat.material?.name} ({mat.quantity})
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
     </>
   )
 }
