@@ -44,7 +44,7 @@ La aplicación se ejecutará por defecto en http://localhost:5173
 📊 Interfaz dinámica y responsiva
 
 ## 🧱 Arquitectura del proyecto
-<pre><code>```text
+'
 ├── public/             # Archivos estáticos
 ├── src/
 │   ├── components/     # Componentes reutilizables (Navbar, Formulario, etc.
@@ -54,7 +54,7 @@ La aplicación se ejecutará por defecto en http://localhost:5173
 ├── index.html          # HTML base
 ├── package.json        # Dependencias y scripts
 ├── vite.config.js      # Configuración de Vite
-</code>
+'
 ## 🧪 Modo de uso
 Ahora mismo se encuentran unos productos y materiales guardados, para usar de ejemplo, que accediendo al panel de administración se pueden editar, borrar y crear nuevos.
 
