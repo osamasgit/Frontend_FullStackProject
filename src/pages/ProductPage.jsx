@@ -9,7 +9,7 @@ export default function ProductPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/products')
+      const res = await fetch('https://backend-fullsatckproject.onrender.com/api/products')
       const data = await res.json()
       setProducts(data)
     } catch (error) {
@@ -19,7 +19,7 @@ export default function ProductPage() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/materials')
+      const res = await fetch('https://backend-fullsatckproject.onrender.com/api/materials')
       const data = await res.json()
       setMaterials(data)
     } catch (error) {
@@ -45,13 +45,13 @@ export default function ProductPage() {
           onSave={async (productData) => {
             try {
                 if (editingProduct) {
-                    await fetch(`http://localhost:8080/api/products/${editingProduct._id}`, {
+                    await fetch(`https://backend-fullsatckproject.onrender.com/api/products/${editingProduct._id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(productData),
                       })
                   } else {
-                      await fetch('http://localhost:8080/api/products', {
+                      await fetch('https://backend-fullsatckproject.onrender.com/api/products', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify(productData),
@@ -72,7 +72,7 @@ export default function ProductPage() {
           onEdit={setEditingProduct}
           onDelete={async (id) => {
             try {
-                await fetch(`http://localhost:8080/api/products/${id}`, {
+                await fetch(`https://backend-fullsatckproject.onrender.com/api/products/${id}`, {
                     method: 'DELETE',
                   })
                   fetchProducts()

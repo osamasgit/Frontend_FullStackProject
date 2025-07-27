@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    axios.post('http://localhost:8080/api/check-auth', { withCredentials: true })
+    axios.post('https://backend-fullsatckproject.onrender.com/api/check-auth', { withCredentials: true })
       .then(response => {
         setIsAuthenticated(response.data.authenticated)
       })
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      await axios.post('http://localhost:8080/api/login', { username, password }, { withCredentials: true })
+      await axios.post('https://backend-fullsatckproject.onrender.com/api/login', { username, password }, { withCredentials: true })
       setIsAuthenticated(true)
       return true
     } catch (error) {
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const logout = async () => {
-    await axios.post('http://localhost:8080/api/logout', { withCredentials: true })
+    await axios.post('https://backend-fullsatckproject.onrender.com/api/logout', { withCredentials: true })
     setIsAuthenticated(false)
   }
 

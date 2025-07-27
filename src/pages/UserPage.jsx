@@ -12,7 +12,7 @@ function UserPage() {
   const [totalGuests, setTotalGuests] = useState('')
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/parts")
+    fetch("https://backend-fullsatckproject.onrender.com/api/parts")
       .then(res => res.json())
       .then(data => setParts(data))
       .catch(err => console.error("Error getting parts:", err))
@@ -30,7 +30,7 @@ function UserPage() {
     setSearchInputs(prev => ({ ...prev, [partId]: query }))
 
     if (query.length > 1) {
-      fetch(`http://localhost:8080/api/products/search?query=${query}`)
+      fetch(`https://backend-fullsatckproject.onrender.com/api/products/search?query=${query}`)
         .then(res => res.json())
         .then(data => {
           setSearchResults(prev => ({ ...prev, [partId]: data }))
@@ -43,7 +43,7 @@ function UserPage() {
 
   const handleAddProductToPart = async (partId, productId) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/products/${productId}`)
+      const res = await fetch(`https://backend-fullsatckproject.onrender.com/api/products/${productId}`)
       const product = await res.json()
 
       setSelectedProducts(prev => {
@@ -67,7 +67,7 @@ function UserPage() {
       .map(p => ({ productId: p._id, unitsPerGuest: p.unitsPerGuest }))
 
     try {
-      const res = await fetch("http://localhost:8080/api/materials/calculate", {
+      const res = await fetch("https://backend-fullsatckproject.onrender.com/api/materials/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ guests: totalGuests, products: allSelectedProducts })
