@@ -93,16 +93,25 @@ section {
 -moz-box-shadow: 11px 13px 0px -6px rgba(0,0,0,0.75);
 }
 
-@media (max-width: 768px) {
-  section {
-    width: 90%;
-  }
-}
 
 .parts-list {
   display: flex;
   gap: 20px;
   list-style: none;
+}
+
+@media (max-width: 768px) {
+  section {
+    width: 90%;
+  }
+  .navbar img {
+    height: 30px;
+    margin-left: 10px;
+  }
+  .parts-list {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 ul {
