@@ -113,10 +113,10 @@ section {
     margin-right: 20px;
   }
 
-  .navbar a:hover{
-    font-size: 15px;
+  .menu {
+    margin-right: 5px;
   }
-  
+
   .parts-list {
     flex-direction: column;
     align-items: center;
