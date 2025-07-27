@@ -46,13 +46,21 @@ La aplicación se ejecutará por defecto en http://localhost:5173
 ## 🧱 Arquitectura del proyecto
 
 ├── public/             # Archivos estáticos
+
 ├── src/
+
 │   ├── components/     # Componentes reutilizables (Navbar, Formulario, etc.)
+
 │   ├── pages/          # Vistas principales (Login, Dashboard, Eventos)
+
 │   ├── App.jsx         # Componente raíz
+
 │   ├── main.jsx        # Punto de entrada
+
 ├── index.html          # HTML base
+
 ├── package.json        # Dependencias y scripts
+
 ├── vite.config.js      # Configuración de Vite
 
 ## 🧪 Modo de uso
