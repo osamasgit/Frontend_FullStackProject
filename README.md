@@ -15,7 +15,7 @@ Está diseñado para ser intuitivo, eficiente y adaptable a distintos tipos de e
 - **CSS** para estilos personalizados
 - **React Router** para navegación entre vistas
 - **Axios** para comunicación con el backend
-- **Express-session** (vía cookies) para mantener la sesión del usuario
+- **Express-session** para mantener la sesión del usuario
 
 ## ⚙️ Instalación
 
